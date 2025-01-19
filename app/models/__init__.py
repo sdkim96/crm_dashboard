@@ -16,7 +16,13 @@ from .enum import (
     ProjectCategory,
     ProjectDateFilter,
     UType,
-    CreateProjectOptions
+    CreateProjectOptions,
+    Role
+)
+from .prompt import (
+    Prompt,
+    PromptConfig,
+    Message
 )
 
 __all__ =[
@@ -31,5 +37,9 @@ __all__ =[
     'ProjectCategory',
     'ProjectDateFilter',
     'UType',
-    'CreateProjectOptions'
+    'CreateProjectOptions',
+    'Prompt',
+    'PromptConfig',
+    'Message',
+    'Role'
 ]

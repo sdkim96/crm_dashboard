@@ -122,6 +122,7 @@ class Settings(BaseSettings):
     JWT_ALGORITHM: str
     JWT_SECRET_KEY: str
     JWT_ACCESS_TOKEN_EXPIRE_MINUTES: int
+    OPENAI_API_KEY: str
 
 
 settings = Settings() # type: ignore

@@ -8,7 +8,6 @@ from argon2 import PasswordHasher
 
 from app.models.enum import UType
 from app.core.config import settings
-from app.core.db import engine
 
 encoder = PasswordHasher()
 
@@ -21,7 +20,7 @@ class UserCreate(BaseModel):
     user_nickname: str = "김성동"
 
 class UserDTO(BaseModel):
-    id: uuid.UUID = Field(default_factory=uuid.uuid4)
+    u_id: uuid.UUID = Field(default_factory=uuid.uuid4)
     name: str = "admin"
 
     user_name: str = "김성동"
@@ -32,7 +31,7 @@ class User(SQLModel, table=True):
 
     __table_args__ = {"extend_existing": True}
 
-    id: uuid.UUID = SQLModelField(default_factory=uuid.uuid4, primary_key=True)  # 기본 키로 설정
+    u_id: uuid.UUID = SQLModelField(default_factory=uuid.uuid4, primary_key=True)  # 기본 키로 설정
     name: str = SQLModelField(default="admin")
     password: str = SQLModelField(default="aaaa")
     
@@ -64,7 +63,7 @@ class User(SQLModel, table=True):
 
         try:
             new_record = cls(
-                id=uuid.uuid4(),
+                u_id=uuid.uuid4(),
                 name=user.name,
                 password=hashed,
                 user_name=user.user_name,
@@ -89,9 +88,9 @@ class User(SQLModel, table=True):
             return None
         
     @classmethod
-    def get_by_id(cls, db: Session, id: uuid.UUID):
+    def get_by_id(cls, db: Session, u_id: uuid.UUID):
         try:
-            stmt = select(cls).where(cls.id == id)
+            stmt = select(cls).where(cls.u_id == u_id)
             return db.exec(stmt).first()
         except Exception as e:
             print("유저 정보 조회중 오류남: ", e)
@@ -126,7 +125,3 @@ class Token(BaseModel):
         token = jwt.encode(payload, settings.SECRET_KEY, algorithm=settings.JWT_ALGORITHM)
         
         return cls(access_token=token)
-    
-
-if __name__ =="__main__":
-    SQLModel.metadata.create_all(engine)

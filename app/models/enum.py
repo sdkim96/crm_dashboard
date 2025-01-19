@@ -26,3 +26,7 @@ class ProjectDateFilter(enum.Enum):
 class CreateProjectOptions(enum.Enum):
     LLM = 'llm'
     HUMAN = 'human'
+
+class Role(enum.Enum):
+    USER = "user"
+    ASSISTANT = "assistant"

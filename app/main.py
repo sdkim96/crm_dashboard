@@ -2,6 +2,8 @@ from fastapi import FastAPI
 from starlette.middleware.cors import CORSMiddleware
 
 from app.core.config import settings
+from app.core.db import init_db
+from app.deps import get_db
 from app.routers import (
     user_r,
     dashboard_r,
@@ -12,6 +14,8 @@ app = FastAPI(
     title=settings.PROJECT_NAME,
     openapi_url=f"{settings.API_V1_STR}/openapi.json",
 )
+
+init_db(db = next(get_db()))
 
 # Set all CORS enabled origins
 if settings.all_cors_origins:
