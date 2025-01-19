@@ -11,7 +11,9 @@ from app.models import (
     ProjectCategory, 
     ProjectPriority, 
     ProjectDateFilter,
+    CreateProjectOptions,
     GetDashboardResponse
+
 )
 
 dashboard_r = APIRouter()
@@ -29,4 +31,11 @@ async def get_dashboard(
 
 ):
     print(type(category))
+
+@dashboard_r.post("/create")
+async def create_project(
+    # me = Depends(get_current_user)
+    options: CreateProjectOptions
+):
+    pass
     
