@@ -1,4 +1,5 @@
 import jwt
+import uuid
 from collections.abc import Generator
 from typing import Annotated
 
@@ -20,10 +21,15 @@ def get_db() -> Generator[Session, None, None]:
     with Session(engine) as session:
         yield session
 
+def get_request():
+    return uuid.uuid4()
+
 security = HTTPBearer()
 
 TokenDep = Annotated[str, Depends(reusable_oauth2)]
 SessionDep = Annotated[Session, Depends(get_db)]
+RequestDep = Annotated[uuid.UUID, Depends(get_request)]
+
 
 def get_current_user(session: SessionDep, token: TokenDep) -> User:
     try:
@@ -43,3 +49,6 @@ def get_current_user(session: SessionDep, token: TokenDep) -> User:
             headers={"WWW-Authenticate": "Bearer"},
         )
     return user
+
+
+UserDep = Annotated[User, Depends(get_current_user)]

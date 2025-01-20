@@ -7,6 +7,10 @@ from .auth import (
 )
 from .api import (
     GetDashboardResponse,
+    PostCreateProjectResponse,
+    PostCreateProjectRequest,
+    PutModifyProjectRequest,
+    PutModifyProjectResponse
 )
 from .dashboard import (
     Project
@@ -22,7 +26,8 @@ from .enum import (
 from .prompt import (
     Prompt,
     PromptConfig,
-    Message
+    Message,
+    Thread
 )
 
 __all__ =[
@@ -41,5 +46,8 @@ __all__ =[
     'Prompt',
     'PromptConfig',
     'Message',
-    'Role'
+    'Role',
+    'PostCreateProjectResponse',
+    'PostCreateProjectRequest',
+    'Thread',
 ]

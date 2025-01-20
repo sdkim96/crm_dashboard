@@ -31,7 +31,7 @@ class Prompt(BaseModel):
     u_id: uuid.UUID = Field(default_factory=uuid.uuid4)
     request_id: uuid.UUID
     user: User
-    system_prompt: str | None = Field(default=SYSTEM_PROMPT)
+    system_prompt: str = Field(default=SYSTEM_PROMPT)
     user_prompt: str
     config: PromptConfig | None = Field(default=PromptConfig())
 
@@ -111,27 +111,43 @@ class Thread(SQLModel, table=True):
     @classmethod
     def put(
         cls, 
-        db: Session, 
-        entity: "Thread"
+        db: Session,
+        u_id: uuid.UUID,
+        messages: List[dict],
+        updated_at: datetime,
+
+        user_id: uuid.UUID | None = None,
+        summary: str | None = None,
+        created_at: datetime | None = None,                
     ) -> None:
         
-        try:
-            
-            statement = select(cls).where(cls.u_id == entity.u_id)
+        try:            
+            statement = select(cls).where(cls.u_id == u_id)
             result = db.exec(statement).first()
             
+            # update
             if result:
-                db.add(entity)
-            else:
-                new_record = cls(
-                    u_id=entity.u_id,
-                    user_id=entity.user_id,
-                    messages=entity.messages,
-                    created_at=entity.created_at,
-                    updated_at=datetime.now(),
+                stmt = (
+                    update(cls)
+                    .where(cls.u_id == u_id) # type: ignore
+                    .values(messages=messages, updated_at=updated_at)
                 )
-                db.add(new_record)
-            db.flush()
+                db.exec(stmt) # type: ignore
+
+            else:
+                stmt = (
+                    insert(cls)
+                    .values(
+                        u_id=u_id,
+                        user_id=user_id,
+                        messages=messages,
+                        created_at=created_at,
+                        updated_at=updated_at,
+                        summary=summary
+                    )
+                )
+                db.exec(stmt) # type: ignore
+
             db.commit()
         except Exception as e:
             db.rollback()
@@ -156,7 +172,17 @@ class Thread(SQLModel, table=True):
     def get_messages(self) -> List[Message]:
         return [Message.model_validate(msg) for msg in self.messages]
     
-    
+    def commit_current(self, db: Session) -> None:
+
+        Thread.put(
+            db, 
+            u_id=self.u_id,
+            messages=self.messages,
+            updated_at=datetime.now(),
+            user_id=self.user_id,
+            summary=self.summary,
+            created_at=self.created_at            
+        )
 
 
 
@@ -179,16 +205,16 @@ if __name__ == "__main__":
     user_prompt = "안녕하세요"
     prompt = Prompt(request_id=request_id, user=user, user_prompt=user_prompt)
 
-    message = Message(content=prompt.user_prompt, role=Role.USER)
-    count = thread.add_message(message)
+    user_message = Message(content=prompt.user_prompt, role=Role.USER, parent_id=None)
+    count = thread.add_message(user_message)
     print(count)
     
     response = "안녕하세요! 저는 챗봇입니다."
-    message = Message(content=response, role=Role.ASSISTANT)
-    count = thread.add_message(message)
+    assistant_message = Message(content=response, role=Role.ASSISTANT, parent_id=user_message.u_id)
+    count = thread.add_message(assistant_message)
     print(count)
 
-    Thread.put(db, thread)
+    thread.commit_current(db)
 
 
     
