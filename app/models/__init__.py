@@ -21,7 +21,9 @@ from .enum import (
     ProjectDateFilter,
     UType,
     CreateProjectOptions,
-    Role
+    Role,
+    ProjectPriorityDTO,
+    ProjectCategoryDTO
 )
 from .prompt import (
     Prompt,
@@ -50,4 +52,9 @@ __all__ =[
     'PostCreateProjectResponse',
     'PostCreateProjectRequest',
     'Thread',
+    'PutModifyProjectRequest',
+    'PutModifyProjectResponse',
+    'ProjectPriorityDTO',
+    'ProjectCategoryDTO'
+
 ]

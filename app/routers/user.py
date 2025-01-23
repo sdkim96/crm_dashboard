@@ -24,7 +24,7 @@ async def sign_up(new_user: UserCreate, db: Session = Depends(get_db)):
     created = User.create(db, user=new_user)
     if created:
         return UserDTO(
-            id=created.id, 
+            u_id=created.u_id, 
             name=created.name, 
             user_type=created.user_type,
             user_name=created.user_name,
@@ -51,8 +51,8 @@ async def sign_in(user: Annotated[OAuth2PasswordRequestForm, Depends()], db: Ses
 @user_r.get("/me", response_model=UserDTO)
 async def get_me(me: User = Depends(get_current_user)):
     return UserDTO(
-        id=me.id, 
-        name=me.name, 
+        u_id=me.u_id, 
+        name=me.name,   
         user_type=me.user_type,
         user_name=me.user_name,
         user_nickname=me.user_nickname,

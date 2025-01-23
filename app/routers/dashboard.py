@@ -31,16 +31,27 @@ dashboard_r = APIRouter()
 @dashboard_r.get("", response_model=GetDashboardResponse)
 async def get_dashboard(
     request_id: RequestDep,
-    category: ProjectCategory = Query(None),
-    priority: ProjectPriority = Query(None),
-    query: str = Query(None),
-    date_filter: ProjectDateFilter = Query(None),
+    db: SessionDep,
+    category: ProjectCategory | None = Query(None),
+    priority: ProjectPriority | None = Query(None),
+    query: str | None = Query(None),
+    date_filter: ProjectDateFilter | None = Query(None),
     offset: int = Query(0),
     limit: int = Query(10)
 
     # me = Depends(get_current_user)
 ):
-    print(request_id)
+    projects = Project.filter(
+        db,
+        category,
+        priority,
+        query,
+        date_filter,
+        offset,
+        limit 
+    )
+
+    return GetDashboardResponse(projects=projects)
 
 @dashboard_r.post("/create", response_model=PostCreateProjectResponse)
 async def create_project(
@@ -116,7 +127,15 @@ async def create_project(
 
         thread.commit_current(db)
 
-        Project.put(db, response)
+        Project.put(
+            db=db, 
+            title=response.title,
+            summary=response.summary,
+            priority=response.priority,
+            category=response.category,
+            start_date=response.start_date,
+            end_date=response.end_date
+        )
 
     return PostCreateProjectResponse(status=bool(response))
     
@@ -129,6 +148,15 @@ async def modify_project(
     body: PutModifyProjectRequest
 ):
     
-    Project.put(db, body)
+    Project.put(
+        db,         
+        title=body.title,
+        summary=body.summary,
+        priority=body.priority,
+        category=body.category,
+        start_date=body.start_date,
+        end_date=body.end_date,
+        u_id=body.u_id,
+    )
 
     return PutModifyProjectResponse(request_id=request_id, status=True)

@@ -18,6 +18,20 @@ class ProjectPriority(enum.Enum):
     HIGH = 'high'
     CRITICAL = 'critical'
 
+class ProjectCategoryDTO(enum.Enum):
+    SHORT_TERM = 'short_term'
+    MID_TERM = 'mid_term'
+    LONG_TERM = 'long_term'
+    FOREVER = 'forever'
+    ALL = 'all'
+
+class ProjectPriorityDTO(enum.Enum):
+    LOW = 'low'
+    MEDIUM = 'medium'
+    HIGH = 'high'
+    CRITICAL = 'critical'
+    ALL = 'all'
+
 class ProjectDateFilter(enum.Enum):
     ALL= 'all'
     WEEK = 'week'

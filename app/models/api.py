@@ -21,6 +21,7 @@ class PostCreateProjectResponse(BaseResponse):
     status: bool
 
 class PutModifyProjectRequest(BaseModel):
+    u_id: uuid.UUID
     title: str
     summary: str
 
