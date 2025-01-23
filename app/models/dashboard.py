@@ -44,6 +44,10 @@ class Project(SQLModel, table=True):
 
     start_date: int
     end_date: int
+
+    file_id: uuid.UUID | None = Field(default=None)
+    file_name: str | None = Field(default=None)
+
     created_at: int = Field(default_factory=lambda: int(datetime.now().timestamp()))
     updated_at: int = Field(default_factory=lambda: int(datetime.now().timestamp()))
 

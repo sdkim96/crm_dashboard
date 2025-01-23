@@ -1,7 +1,12 @@
+import uuid
 from fastapi import (
     APIRouter, 
     Query,
+    UploadFile,
+    File,
+    Form
 )
+from typing import Annotated
 from datetime import datetime, timedelta
 from app.deps import (
     RequestDep, 
@@ -160,3 +165,14 @@ async def modify_project(
     )
 
     return PutModifyProjectResponse(request_id=request_id, status=True)
+
+@dashboard_r.post("/upload_file")
+async def upload_file(
+    request_id: RequestDep,
+    me: UserDep,
+    u_id: Annotated[uuid.UUID, Form(...)],
+    file: Annotated[UploadFile, File(...)]
+):
+    return {"request_id": request_id, "u_id": u_id, "file_name": file.filename}
+
+# @dashboard_r.delete("")
