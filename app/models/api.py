@@ -24,7 +24,7 @@ class PutModifyProjectRequest(BaseModel):
     u_id: uuid.UUID
     title: str
     summary: str
-    content: str
+    content: str | None
 
     priority: ProjectPriority
     category: ProjectCategory

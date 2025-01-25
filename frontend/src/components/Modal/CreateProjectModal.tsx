@@ -6,9 +6,37 @@ import {
   Textarea,
   Spinner,
   Box,
-  Text
+  Text,
+  Button,
+  HStack,
+  IconButton,
+  Tooltip,
 } from '@chakra-ui/react';
 import { KeyboardEvent, useState } from 'react';
+import { FaMicrophone, FaPaperPlane } from 'react-icons/fa';
+
+// 타입 선언
+type SpeechRecognition = {
+  new (): {
+    lang: string;
+    interimResults: boolean;
+    start: () => void;
+    stop: () => void;
+    onstart: () => void;
+    onend: () => void;
+    onerror: (event: { error: string }) => void;
+    onresult: (event: {
+      results: SpeechRecognitionResultList;
+    }) => void;
+  };
+};
+
+declare global {
+  interface Window {
+    SpeechRecognition: SpeechRecognition;
+    webkitSpeechRecognition: SpeechRecognition;
+  }
+}
 
 interface CreateProjectModalProps {
   isOpen: boolean;
@@ -17,7 +45,7 @@ interface CreateProjectModalProps {
   isSubmitted: boolean;
   setIsSubmitted: (isSubmitted: boolean) => void;
   onQueryChange: (query: string) => void;
-  onSubmit: () => Promise<boolean>; // 프로젝트 생성 성공 여부 반환
+  onSubmit: () => Promise<boolean>;
 }
 
 const CreateProjectModal = ({
@@ -29,41 +57,71 @@ const CreateProjectModal = ({
   onQueryChange,
   onSubmit,
 }: CreateProjectModalProps) => {
-  const [isLoading, setIsLoading] = useState(false); // 요청 진행 상태
+  const [isLoading, setIsLoading] = useState(false);
+  const [isListening, setIsListening] = useState(false);
+
+  const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
 
   const handleKeyDown = async (e: KeyboardEvent<HTMLTextAreaElement>) => {
     if (e.key === 'Enter' && !e.shiftKey && !e.altKey && !e.metaKey) {
-      e.preventDefault(); // 기본 줄바꿈 동작 방지
+      e.preventDefault();
       await handleSubmit();
     }
   };
 
   const handleSubmit = async () => {
-    setIsLoading(true); // 로딩 시작
-    const success = await onSubmit(); // onSubmit 호출
-    setIsLoading(false); // 로딩 종료
-    setIsSubmitted(success); // 요청 성공 여부 저장
+    setIsLoading(true);
+    const success = await onSubmit();
+    setIsLoading(false);
+    setIsSubmitted(success);
 
     if (success) {
-      // 요청 성공 시 짧은 지연 후 모달 닫기
       setTimeout(() => {
         onClose();
-      }, 1000); // 1초 후 모달 닫기
+      }, 1000);
     }
   };
 
+  const handleStartListening = () => {
+    if (!SpeechRecognition) {
+      alert('이 브라우저는 음성 인식을 지원하지 않습니다.');
+      return;
+    }
+
+    const recognition = new SpeechRecognition();
+    recognition.lang = 'ko-KR';
+    recognition.interimResults = true;
+
+    recognition.onstart = () => {
+      setIsListening(true);
+    };
+
+    recognition.onend = () => {
+      setIsListening(false);
+    };
+
+    recognition.onerror = (event: { error: string }) => {
+      console.error('STT 오류:', event.error);
+      setIsListening(false);
+    };
+
+    recognition.onresult = (event: { results: SpeechRecognitionResultList }) => {
+      console.log('인식 결과:', event.results);
+      const transcript = Array.from(event.results)
+        .map((result) => result[0].transcript)
+        .join('');
+      onQueryChange(query + transcript);
+    };
+
+    recognition.start();
+  };
+
   return (
-    <Modal isOpen={isOpen} onClose={onClose} isCentered>
+    <Modal isOpen={isOpen} onClose={onClose} isCentered >
       <ModalOverlay />
-      <ModalContent
-        maxW="800px"
-        borderRadius="md"
-        p={4}
-        boxShadow="lg"
-      >
+      <ModalContent maxW="800px" borderRadius="20" p={4} boxShadow="lg">
         <ModalBody>
           {isSubmitted ? (
-            // 요청 성공 시 피드백 표시
             <Box textAlign="center">
               <Text fontSize="xl" fontWeight="bold">AI가 곧 답변을 생성합니다.</Text>
             </Box>
@@ -75,10 +133,32 @@ const CreateProjectModal = ({
                 onChange={(e) => onQueryChange(e.target.value)}
                 onKeyDown={handleKeyDown}
                 resize="none"
+                borderRadius="20"
                 fontSize="lg"
-                h="50px"
-                isDisabled={isLoading} // 로딩 중에는 입력 불가
+                h="100px"
+                isDisabled={isLoading || isListening}
               />
+              <HStack mt={4} justifyContent="space-between">
+                <Tooltip label={isListening ? '녹음 중...' : '음성 입력 시작'} aria-label="Speech Tooltip">
+                  <IconButton
+                    aria-label="Start Speech"
+                    icon={<FaMicrophone />}
+                    colorScheme={isListening ? 'orange' : 'blue'}
+                    onClick={handleStartListening}
+                    isDisabled={isListening}
+                    borderRadius="12"
+                  />
+                </Tooltip>
+                <Button
+                  rightIcon={<FaPaperPlane />}
+                  colorScheme="teal"
+                  onClick={handleSubmit}
+                  isDisabled={isLoading}
+                  borderRadius="12"
+                >
+                  보내기
+                </Button>
+              </HStack>
               {isLoading && (
                 <Box display="flex" justifyContent="center" mt={4}>
                   <Spinner size="lg" />

@@ -304,6 +304,7 @@ function ProjectDashboard() {
             u_id: updatedTask.u_id!,
             title: updatedTask.title!,
             summary: updatedTask.summary!,
+            content: updatedTask.content!,
             priority: updatedTask.priority!,
             category: updatedTask.category!,
             start_date: updatedTask.start_date,
