@@ -19,11 +19,18 @@ jobs:
           python-version: '3.11.9'
 
       # 3) Install Poetry (we'll use pip to install the Poetry CLI)
-      - name: Install Poetry
+      - name: Install/Upgrade Poetry (and plugin)
         run: |
           python -m pip install --upgrade pip
+          # Install poetry (2.x)
           pip install --upgrade poetry
+          
+          # For Poetry 2.x, install the export plugin:
+          pip install poetry-plugin-export
+          
+          # Verify versions and that commands are recognized:
           poetry --version
+          poetry self show plugins
 
       # 4) Install dependencies using Poetry
       #    This will create a .venv inside your repo (or system-wide venv, depending on Poetry config).
