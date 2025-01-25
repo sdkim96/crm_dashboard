@@ -19,12 +19,6 @@ jobs:
     - name: Set up Docker Buildx
       uses: docker/setup-buildx-action@v2
 
-    - name: Debug Secrets
-      run: |
-        echo "Container Username: ${{ secrets.AzureAppService_ContainerUsername_0d552536804a4965aa3b6d365035a8d2 }}"
-        echo "Container Password Length: ${#${{ secrets.AzureAppService_ContainerPassword_7e42620f07a040d49bc2a94a98802af2 }}}"
-        echo "Publish Profile Set: ${{ secrets.AzureAppService_PublishProfile_ae4b81708e854fb0b8fd7a40467e13bc }}"
-
     - name: Log in to registry
       uses: docker/login-action@v2
       with:
@@ -36,7 +30,7 @@ jobs:
       uses: docker/build-push-action@v3
       with:
         push: true
-        tags: index.docker.io/${{ secrets.AzureAppService_ContainerUsername_0d552536804a4965aa3b6d365035a8d2 }}/dev-swnl-crm:${{ github.sha }}
+        tags: index.docker.io/sdkim96/dev-swnl-crm:${{ github.sha }}
         file: ./Dockerfile
 
   deploy:
