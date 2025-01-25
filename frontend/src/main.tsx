@@ -9,7 +9,7 @@ import { StrictMode } from "react"
 import { OpenAPI } from "./client"
 import theme from "./theme"
 
-OpenAPI.BASE = import.meta.env.VITE_API_URL; // API URL 설정
+OpenAPI.BASE = import.meta.env.VITE_API_URL || ''; // API URL 설정
 OpenAPI.TOKEN = async () => {
   return localStorage.getItem("token") || ""; // 토큰 반환
 };
