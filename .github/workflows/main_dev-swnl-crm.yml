@@ -30,7 +30,7 @@ jobs:
       uses: docker/build-push-action@v3
       with:
         push: true
-        tags: index.docker.io/${{ secrets.AzureAppService_ContainerUsername_0d552536804a4965aa3b6d365035a8d2 }}/sdkim96/dev-swnl-crm:${{ github.sha }}
+        tags: index.docker.io/${{ secrets.AzureAppService_ContainerUsername_0d552536804a4965aa3b6d365035a8d2 }}/dev-swnl-crm:${{ github.sha }}
         file: ./Dockerfile
 
   deploy:
