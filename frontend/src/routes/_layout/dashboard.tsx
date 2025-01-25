@@ -229,7 +229,7 @@ function ProjectDashboard() {
                     </Tag>
                   </Td>
                   <Td>{task.title}</Td>
-                  <Td>{task.summary ? '📝 상세보기' : '-'}</Td>
+                  <Td>{task.content ? '📝 상세보기' : '-'}</Td>
                   <Td>{new Date(task.start_date * 1000).toLocaleDateString()}</Td>
                   <Td>{new Date(task.end_date * 1000).toLocaleDateString()}</Td>
                   <Td>
