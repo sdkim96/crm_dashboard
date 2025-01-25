@@ -1,6 +1,7 @@
 import jwt
 import uuid
 from collections.abc import Generator
+from azure.storage.blob import BlobServiceClient
 from typing import Annotated
 
 from sqlmodel import Session
@@ -17,6 +18,9 @@ reusable_oauth2 = OAuth2PasswordBearer(
     tokenUrl=f"api/v1/users/sign_in"
 )
 
+def get_blob_client():
+    return BlobServiceClient.from_connection_string(settings.AZURE_BLOB_KEY)
+
 def get_db() -> Generator[Session, None, None]:
     with Session(engine) as session:
         yield session
@@ -29,7 +33,7 @@ security = HTTPBearer()
 TokenDep = Annotated[str, Depends(reusable_oauth2)]
 SessionDep = Annotated[Session, Depends(get_db)]
 RequestDep = Annotated[uuid.UUID, Depends(get_request)]
-
+BlobClientDep = Annotated[BlobServiceClient, Depends(get_blob_client)]
 
 def get_current_user(session: SessionDep, token: TokenDep) -> User:
     try:

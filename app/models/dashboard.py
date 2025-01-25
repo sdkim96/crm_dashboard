@@ -7,7 +7,8 @@ from sqlmodel import (
     Session, 
     update, 
     insert,
-    select
+    select,
+    delete
 )
 from pydantic import BaseModel
 from datetime import datetime
@@ -16,20 +17,23 @@ from .enum import (
     ProjectPriority,
     ProjectCategory,
     ProjectDateFilter,
-    ProjectPriorityDTO,
-    ProjectCategoryDTO,
 )
 
 class ProjectDTO(BaseModel):
     u_id: uuid.UUID = Field(default_factory=uuid.uuid4)
 
-    title: str
-    summary: str
+    title: str | None = Field(default="")
+    summary: str | None = Field(default="")
 
     priority: ProjectPriority
     category: ProjectCategory
+
     start_date: int
     end_date: int
+
+    file_id: uuid.UUID | None = Field(default=None)
+    file_name: str | None = Field(default=None)
+    original_file_name: str | None = Field(default=None)
     
 
 
@@ -47,6 +51,7 @@ class Project(SQLModel, table=True):
 
     file_id: uuid.UUID | None = Field(default=None)
     file_name: str | None = Field(default=None)
+    original_file_name: str | None = Field(default=None)
 
     created_at: int = Field(default_factory=lambda: int(datetime.now().timestamp()))
     updated_at: int = Field(default_factory=lambda: int(datetime.now().timestamp()))
@@ -57,6 +62,41 @@ class Project(SQLModel, table=True):
             return self.end_date - self.start_date
         return None
     
+    @classmethod
+    def get_one(
+        cls,
+        db: Session,
+        u_id: uuid.UUID
+    ) -> "Project":
+        stmt = select(cls).where(cls.u_id == u_id)
+        return db.exec(stmt).first() # type: ignore
+
+
+    @classmethod
+    def put_file(
+        cls,
+        db: Session,
+        u_id: uuid.UUID,
+        file_id: uuid.UUID | None,
+        file_name: str | None,
+        original_file_name: str | None
+    ):
+        stmt = (
+            update(cls)
+            .where(cls.u_id == u_id) # type: ignore
+            .values(
+                file_id=file_id,
+                file_name=file_name,
+                original_file_name=original_file_name
+            )
+        )        
+
+        result = db.exec(stmt) # type: ignore
+        if result.rowcount == 0:
+            db.rollback()  # 롤백
+            raise ValueError("No rows were updated")
+        else:
+            db.commit()  # 커밋
 
     @classmethod
     def filter(
@@ -145,3 +185,22 @@ class Project(SQLModel, table=True):
             db.commit()
         except Exception as e:
             raise e
+        
+
+    @classmethod
+    def delete(
+        cls,
+        db: Session,
+        u_id: uuid.UUID
+    ):
+        stmt = (
+            delete(cls)
+            .where(cls.u_id == u_id) # type: ignore
+        )
+        try:
+            db.exec(stmt) # type: ignore
+            db.commit()
+        except Exception as e:
+            raise e
+        
+        return True

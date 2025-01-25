@@ -3,7 +3,7 @@
 import type { CancelablePromise } from './core/CancelablePromise';
 import { OpenAPI } from './core/OpenAPI';
 import { request as __request } from './core/request';
-import type { SignUpApiV1UsersSignUpPostData, SignUpApiV1UsersSignUpPostResponse, SignInApiV1UsersSignInPostData, SignInApiV1UsersSignInPostResponse, GetMeApiV1UsersMeGetResponse, GetDashboardApiV1DashboardGetData, GetDashboardApiV1DashboardGetResponse, CreateProjectApiV1DashboardCreatePostData, CreateProjectApiV1DashboardCreatePostResponse, ModifyProjectApiV1DashboardModifyPutData, ModifyProjectApiV1DashboardModifyPutResponse } from './types.gen';
+import type { SignUpApiV1UsersSignUpPostData, SignUpApiV1UsersSignUpPostResponse, SignInApiV1UsersSignInPostData, SignInApiV1UsersSignInPostResponse, GetMeApiV1UsersMeGetResponse, GetDashboardApiV1DashboardGetData, GetDashboardApiV1DashboardGetResponse, CreateProjectApiV1DashboardCreatePostData, CreateProjectApiV1DashboardCreatePostResponse, ModifyProjectApiV1DashboardModifyPutData, ModifyProjectApiV1DashboardModifyPutResponse, DeleteProjectApiV1DashboardDeleteDeleteData, DeleteProjectApiV1DashboardDeleteDeleteResponse, UploadFileApiV1DashboardUploadFilePostData, UploadFileApiV1DashboardUploadFilePostResponse, DownloadFileApiV1DashboardDownloadFileGetData, DownloadFileApiV1DashboardDownloadFileGetResponse, DeleteFileApiV1DashboardDeleteFileDeleteData, DeleteFileApiV1DashboardDeleteFileDeleteResponse } from './types.gen';
 
 export class DefaultService {
     /**
@@ -132,6 +132,85 @@ export class DefaultService {
             url: '/api/v1/dashboard/modify',
             body: data.requestBody,
             mediaType: 'application/json',
+            errors: {
+                422: 'Validation Error'
+            }
+        });
+    }
+    
+    /**
+     * Delete Project
+     * @param data The data for the request.
+     * @param data.uId
+     * @returns DeleteDashboardResponse Successful Response
+     * @throws ApiError
+     */
+    public static deleteProjectApiV1DashboardDeleteDelete(data: DeleteProjectApiV1DashboardDeleteDeleteData): CancelablePromise<DeleteProjectApiV1DashboardDeleteDeleteResponse> {
+        return __request(OpenAPI, {
+            method: 'DELETE',
+            url: '/api/v1/dashboard/delete',
+            query: {
+                u_id: data.uId
+            },
+            errors: {
+                422: 'Validation Error'
+            }
+        });
+    }
+    
+    /**
+     * Upload File
+     * @param data The data for the request.
+     * @param data.formData
+     * @returns PostDashboardUploadFileResponse Successful Response
+     * @throws ApiError
+     */
+    public static uploadFileApiV1DashboardUploadFilePost(data: UploadFileApiV1DashboardUploadFilePostData): CancelablePromise<UploadFileApiV1DashboardUploadFilePostResponse> {
+        return __request(OpenAPI, {
+            method: 'POST',
+            url: '/api/v1/dashboard/upload_file',
+            formData: data.formData,
+            mediaType: 'multipart/form-data',
+            errors: {
+                422: 'Validation Error'
+            }
+        });
+    }
+    
+    /**
+     * Download File
+     * @param data The data for the request.
+     * @param data.uId
+     * @returns binary Successful Response
+     * @throws ApiError
+     */
+    public static downloadFileApiV1DashboardDownloadFileGet(data: DownloadFileApiV1DashboardDownloadFileGetData): CancelablePromise<DownloadFileApiV1DashboardDownloadFileGetResponse> {
+        return __request(OpenAPI, {
+            method: 'GET',
+            url: '/api/v1/dashboard/download_file',
+            query: {
+                u_id: data.uId
+            },
+            errors: {
+                422: 'Validation Error'
+            }
+        });
+    }
+    
+    /**
+     * Delete File
+     * @param data The data for the request.
+     * @param data.uId
+     * @returns DeleteDashboardResponse Successful Response
+     * @throws ApiError
+     */
+    public static deleteFileApiV1DashboardDeleteFileDelete(data: DeleteFileApiV1DashboardDeleteFileDeleteData): CancelablePromise<DeleteFileApiV1DashboardDeleteFileDeleteResponse> {
+        return __request(OpenAPI, {
+            method: 'DELETE',
+            url: '/api/v1/dashboard/delete_file',
+            query: {
+                u_id: data.uId
+            },
             errors: {
                 422: 'Validation Error'
             }

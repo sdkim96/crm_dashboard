@@ -19,6 +19,8 @@ argon2-cffi = "^23.1.0"
 pyjwt = "^2.10.1"
 python-multipart = "^0.0.20"
 openai = "^1.59.8"
+azure-storage-blob = "^12.24.1"
+azure-identity = "^1.19.0"
 
 [build-system]
 requires = ["poetry-core"]

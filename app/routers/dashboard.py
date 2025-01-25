@@ -1,17 +1,21 @@
 import uuid
+import io
 from fastapi import (
     APIRouter, 
     Query,
     UploadFile,
     File,
-    Form
+    Form,
 )
+from fastapi.responses import StreamingResponse
 from typing import Annotated
 from datetime import datetime, timedelta
+from urllib.parse import quote
 from app.deps import (
     RequestDep, 
     SessionDep,
-    UserDep
+    UserDep,
+    BlobClientDep
 )
 from app.models import (
     ProjectCategory, 
@@ -26,9 +30,12 @@ from app.models import (
     Message,
     Role,
     PutModifyProjectRequest,
-    PutModifyProjectResponse
+    PutModifyProjectResponse,
+    PostDashboardUploadFileResponse,
+    DeleteDashboardResponse,
+    ProjectDTO
 )
-from app.core import chat
+from app.modules import llm, blob
 
 
 dashboard_r = APIRouter()
@@ -56,7 +63,22 @@ async def get_dashboard(
         limit 
     )
 
-    return GetDashboardResponse(projects=projects)
+    projects_dto=[
+        ProjectDTO(
+            u_id=p.u_id,
+            title=p.title,
+            summary=p.summary,
+            priority=p.priority,
+            category=p.category,
+            start_date=p.start_date,
+            end_date=p.end_date,
+            file_id=p.file_id,
+            file_name=p.file_name,
+            original_file_name=p.original_file_name,
+        ) for p in projects
+    ]
+
+    return GetDashboardResponse(projects=projects_dto)
 
 @dashboard_r.post("/create", response_model=PostCreateProjectResponse)
 async def create_project(
@@ -121,7 +143,7 @@ async def create_project(
     if thread is None:
         thread = Thread(user_id=me.u_id, messages=[])
 
-    response: chat.ProjectGPTResponse | None = await chat.infer(prompt, chat.ResponseOption.PROJECT) # type: ignore
+    response: llm.ProjectGPTResponse | None = await llm.infer(prompt, llm.ResponseOption.PROJECT) # type: ignore
 
     if response:
         user_message = Message(content=body.query, role=Role.USER, parent_id=body.parent_id)
@@ -166,13 +188,112 @@ async def modify_project(
 
     return PutModifyProjectResponse(request_id=request_id, status=True)
 
-@dashboard_r.post("/upload_file")
+
+@dashboard_r.delete("/delete", response_model=DeleteDashboardResponse)
+async def delete_project(
+    request_id: RequestDep,
+    db: SessionDep,
+    blob_client: BlobClientDep,
+    u_id: Annotated[uuid.UUID, Query(...)]
+):
+    one = Project.get_one(db, u_id)
+
+    if one is None:
+        raise ValueError("No found")
+    
+    if one.file_name:
+        blob.delete_blob(blob_client, one.file_name)
+
+    deleted = Project.delete(db, u_id)
+
+    return DeleteDashboardResponse(status=deleted)
+
+
+@dashboard_r.post("/upload_file", response_model=PostDashboardUploadFileResponse)
 async def upload_file(
     request_id: RequestDep,
     me: UserDep,
+    db: SessionDep,
+    blob_client: BlobClientDep,
     u_id: Annotated[uuid.UUID, Form(...)],
     file: Annotated[UploadFile, File(...)]
 ):
-    return {"request_id": request_id, "u_id": u_id, "file_name": file.filename}
+    if file.filename is None:
+        raise ValueError("No file name")
+    
+    random_file_id = uuid.uuid4()
+    extension = file.filename.split(".")[-1]
+    blob_name = f"{str(random_file_id)}.{extension}"
+    file_bytes = file.file.read()
 
-# @dashboard_r.delete("")
+    meta = blob.upload_blob_stream(blob_client, blob_name, io.BytesIO(file_bytes))
+
+    if meta:
+        Project.put_file(db, u_id, random_file_id, blob_name, file.filename)
+
+    return PostDashboardUploadFileResponse(status=bool(meta))
+
+
+@dashboard_r.get("/download_file", response_class=StreamingResponse, responses={200: {"content": {
+  "application/octet-stream": {
+    "schema": {
+      "type": "string",
+      "format": "binary"
+    }
+  }
+}}})
+async def download_file(
+    request_id: RequestDep,
+    me: UserDep,
+    db: SessionDep,
+    blob_client: BlobClientDep,
+    u_id: Annotated[uuid.UUID, Query(...)],
+):
+    one = Project.get_one(db, u_id)
+
+    if one is None:
+        raise ValueError("No found")
+    
+    if one.file_name is None:
+        raise ValueError("No file name")
+
+    file_stream = blob.download_blob_to_stream(blob_client, one.file_name)
+    if file_stream is None:
+        raise ValueError("No found")
+
+    filename = one.original_file_name or "file"
+    encoded_filename = quote(filename)
+    return StreamingResponse(
+        file_stream,
+        media_type="application/octet-stream",
+        headers={
+            "Content-Disposition": f"attachment; filename*=UTF-8''{encoded_filename}"
+        }
+    )
+
+
+@dashboard_r.delete("/delete_file", response_model=DeleteDashboardResponse)
+async def delete_file(
+    request_id: RequestDep,
+    me: UserDep,
+    db: SessionDep,
+    blob_client: BlobClientDep,
+    u_id: Annotated[uuid.UUID, Query(...)],
+):
+    one = Project.get_one(db, u_id)
+
+    if one is None:
+        raise ValueError("No found")
+    
+    if one.file_name is None:
+        raise ValueError("No file name")
+
+    exist = blob.delete_blob(blob_client, one.file_name)
+
+    if exist is None:
+        Project.put_file(db, u_id, None, None, None)
+        status = True
+    else:
+        status = False
+
+    return DeleteDashboardResponse(status=status)

@@ -10,10 +10,13 @@ from .api import (
     PostCreateProjectResponse,
     PostCreateProjectRequest,
     PutModifyProjectRequest,
-    PutModifyProjectResponse
+    PutModifyProjectResponse,
+    PostDashboardUploadFileResponse,
+    DeleteDashboardResponse
 )
 from .dashboard import (
-    Project
+    Project,
+    ProjectDTO,
 )
 from .enum import (
     ProjectPriority,
@@ -22,8 +25,6 @@ from .enum import (
     UType,
     CreateProjectOptions,
     Role,
-    ProjectPriorityDTO,
-    ProjectCategoryDTO
 )
 from .prompt import (
     Prompt,
@@ -54,7 +55,8 @@ __all__ =[
     'Thread',
     'PutModifyProjectRequest',
     'PutModifyProjectResponse',
-    'ProjectPriorityDTO',
-    'ProjectCategoryDTO'
+    'PostDashboardUploadFileResponse',
+    'DeleteDashboardResponse',
+    'ProjectDTO',
 
 ]

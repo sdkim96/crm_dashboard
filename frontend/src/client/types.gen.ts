@@ -9,9 +9,19 @@ export type Body_sign_in_api_v1_users_sign_in_post = {
     client_secret?: (string | null);
 };
 
+export type Body_upload_file_api_v1_dashboard_upload_file_post = {
+    u_id: string;
+    file: (Blob | File);
+};
+
+export type DeleteDashboardResponse = {
+    request_id?: string;
+    status: boolean;
+};
+
 export type GetDashboardResponse = {
     request_id?: string;
-    projects: Array<Project>;
+    projects: Array<ProjectDTO>;
 };
 
 export type HTTPValidationError = {
@@ -30,21 +40,27 @@ export type PostCreateProjectResponse = {
     status: boolean;
 };
 
-export type Project = {
-    u_id?: string;
-    title?: (string | null);
-    summary?: (string | null);
-    priority?: ProjectPriority;
-    category?: ProjectCategory;
-    start_date: number;
-    end_date: number;
-    created_at?: number;
-    updated_at?: number;
+export type PostDashboardUploadFileResponse = {
+    request_id?: string;
+    status: boolean;
 };
 
 export type ProjectCategory = 'short_term' | 'mid_term' | 'long_term' | 'forever';
 
 export type ProjectDateFilter = 'all' | 'week' | 'month';
+
+export type ProjectDTO = {
+    u_id?: string;
+    title?: (string | null);
+    summary?: (string | null);
+    priority: ProjectPriority;
+    category: ProjectCategory;
+    start_date: number;
+    end_date: number;
+    file_id?: (string | null);
+    file_name?: (string | null);
+    original_file_name?: (string | null);
+};
 
 export type ProjectPriority = 'low' | 'medium' | 'high' | 'critical';
 
@@ -127,3 +143,27 @@ export type ModifyProjectApiV1DashboardModifyPutData = {
 };
 
 export type ModifyProjectApiV1DashboardModifyPutResponse = (PutModifyProjectResponse);
+
+export type DeleteProjectApiV1DashboardDeleteDeleteData = {
+    uId: string;
+};
+
+export type DeleteProjectApiV1DashboardDeleteDeleteResponse = (DeleteDashboardResponse);
+
+export type UploadFileApiV1DashboardUploadFilePostData = {
+    formData: Body_upload_file_api_v1_dashboard_upload_file_post;
+};
+
+export type UploadFileApiV1DashboardUploadFilePostResponse = (PostDashboardUploadFileResponse);
+
+export type DownloadFileApiV1DashboardDownloadFileGetData = {
+    uId: string;
+};
+
+export type DownloadFileApiV1DashboardDownloadFileGetResponse = ((Blob | File));
+
+export type DeleteFileApiV1DashboardDeleteFileDeleteData = {
+    uId: string;
+};
+
+export type DeleteFileApiV1DashboardDeleteFileDeleteResponse = (DeleteDashboardResponse);

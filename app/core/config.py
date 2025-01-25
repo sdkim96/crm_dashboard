@@ -122,7 +122,10 @@ class Settings(BaseSettings):
     JWT_ALGORITHM: str
     JWT_SECRET_KEY: str
     JWT_ACCESS_TOKEN_EXPIRE_MINUTES: int
+    
     OPENAI_API_KEY: str
+    AZURE_BLOB_KEY: str
+    AZURE_BLOB_CONTAINER: str
 
 
 settings = Settings() # type: ignore
