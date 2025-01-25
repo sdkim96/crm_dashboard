@@ -1,47 +1,59 @@
-# Docs for the Azure Web Apps Deploy action: https://github.com/Azure/webapps-deploy
-# More GitHub Actions for Azure: https://github.com/Azure/actions
-# More info on Python, GitHub Actions, and Azure App Service: https://aka.ms/python-webapps-actions
-
 name: Build and deploy Python app to Azure Web App - swnl-crm
 
 on:
   push:
-    branches:
-      - main
+    branches: [ "main" ]
   workflow_dispatch:
 
 jobs:
   build:
     runs-on: ubuntu-latest
-
     steps:
+      # 1) Check out the repo
       - uses: actions/checkout@v4
 
-      - name: Set up Python version
+      # 2) Set up a specific Python version
+      - name: Set up Python
         uses: actions/setup-python@v5
         with:
-          python-version: '3.11'
+          python-version: '3.11.9'
 
-      - name: Create and start virtual environment
+      # 3) Install Poetry (we'll use pip to install the Poetry CLI)
+      - name: Install Poetry
         run: |
-          python -m venv venv
-          source venv/bin/activate
-      
-      - name: Install dependencies
-        run: pip install -r requirements.txt
-        
-      # Optional: Add step to run tests here (PyTest, Django test suites, etc.)
+          python -m pip install --upgrade pip
+          pip install poetry
 
+      # 4) Install dependencies using Poetry
+      #    This will create a .venv inside your repo (or system-wide venv, depending on Poetry config).
+      - name: Install dependencies with Poetry
+        run: |
+          poetry install --no-interaction --no-ansi
+          # If you want to install dev dependencies as well:
+          # poetry install --with dev
+
+      # Optional: run tests
+      # - name: Run tests
+      #   run: poetry run pytest  # or whatever command your tests require
+
+      # 5) (Optional) Export a requirements.txt if needed for Azure runtime
+      #    Some Azure scenarios expect a requirements.txt at startup.
+      #    If your Azure setup does not require it, you can skip this step.
+      - name: Export Poetry dependencies to requirements.txt
+        run: |
+          poetry export -f requirements.txt --output requirements.txt --without-hashes
+
+      # 6) Zip your source code (and any files Azure needs to run/install)
       - name: Zip artifact for deployment
-        run: zip release.zip ./* -r
+        run: zip release.zip ./* -r \
+          -x "*.venv/*"
 
+      # 7) Upload artifact for the next job
       - name: Upload artifact for deployment jobs
         uses: actions/upload-artifact@v4
         with:
           name: python-app
-          path: |
-            release.zip
-            !venv/
+          path: release.zip
 
   deploy:
     runs-on: ubuntu-latest
@@ -50,7 +62,7 @@ jobs:
       name: 'Production'
       url: ${{ steps.deploy-to-webapp.outputs.webapp-url }}
     permissions:
-      id-token: write #This is required for requesting the JWT
+      id-token: write  # required for requesting the JWT for Azure login
 
     steps:
       - name: Download artifact from build job
@@ -61,18 +73,16 @@ jobs:
       - name: Unzip artifact for deployment
         run: unzip release.zip
 
-      
       - name: Login to Azure
         uses: azure/login@v2
         with:
-          client-id: ${{ secrets.AZUREAPPSERVICE_CLIENTID_DBE53421FF744AA8B7015DBB941D2202 }}
-          tenant-id: ${{ secrets.AZUREAPPSERVICE_TENANTID_5088E999E17243C28DB5907335EF61FA }}
-          subscription-id: ${{ secrets.AZUREAPPSERVICE_SUBSCRIPTIONID_9B0BEEF7AA2D40E882995D334DFE5FC4 }}
+          client-id: ${{ secrets.AZUREAPPSERVICE_CLIENTID_XXXX }}
+          tenant-id: ${{ secrets.AZUREAPPSERVICE_TENANTID_XXXX }}
+          subscription-id: ${{ secrets.AZUREAPPSERVICE_SUBSCRIPTIONID_XXXX }}
 
-      - name: 'Deploy to Azure Web App'
+      - name: Deploy to Azure Web App
         uses: azure/webapps-deploy@v3
         id: deploy-to-webapp
         with:
           app-name: 'swnl-crm'
           slot-name: 'Production'
-          
