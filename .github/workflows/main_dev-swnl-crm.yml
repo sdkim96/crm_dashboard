@@ -48,4 +48,4 @@ jobs:
         app-name: 'dev-swnl-crm'
         slot-name: 'production'
         publish-profile: ${{ secrets.AzureAppService_PublishProfile_ae4b81708e854fb0b8fd7a40467e13bc }}
-        images: 'index.docker.io/${{ secrets.AzureAppService_ContainerUsername_0d552536804a4965aa3b6d365035a8d2 }}/sdkim96/dev-swnl-crm:${{ github.sha }}'
+        images: 'index.docker.io/sdkim96/dev-swnl-crm:${{ github.sha }}'
