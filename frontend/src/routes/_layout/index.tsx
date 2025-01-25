@@ -9,7 +9,6 @@ import {
   Flex,
   Badge,
   Progress,
-  Icon,
   SimpleGrid
 } from "@chakra-ui/react";
 import { WarningTwoIcon, CheckCircleIcon, TimeIcon } from "@chakra-ui/icons";
