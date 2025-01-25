@@ -16,13 +16,14 @@ jobs:
       - name: Set up Python
         uses: actions/setup-python@v5
         with:
-          python-version: '3.11'
+          python-version: '3.11.9'
 
       # 3) Install Poetry (we'll use pip to install the Poetry CLI)
       - name: Install Poetry
         run: |
           python -m pip install --upgrade pip
-          pip install poetry
+          pip install --upgrade poetry
+          poetry --version
 
       # 4) Install dependencies using Poetry
       #    This will create a .venv inside your repo (or system-wide venv, depending on Poetry config).
@@ -31,7 +32,6 @@ jobs:
           poetry install --no-interaction --no-ansi
           # If you want to install dev dependencies as well:
           # poetry install --with dev
-
       # Optional: run tests
       # - name: Run tests
       #   run: poetry run pytest  # or whatever command your tests require
