@@ -17,6 +17,7 @@ class BaseGPTResponse(BaseModel):
 class ProjectGPTResponse(BaseModel):
     title: str
     summary: str
+    content: str
     
     priority: ProjectPriority = ProjectPriority.LOW
     category: ProjectCategory = ProjectCategory.SHORT_TERM

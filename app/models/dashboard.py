@@ -24,6 +24,7 @@ class ProjectDTO(BaseModel):
 
     title: str | None = Field(default="")
     summary: str | None = Field(default="")
+    content: str | None = Field(default=None)
 
     priority: ProjectPriority
     category: ProjectCategory
@@ -42,6 +43,7 @@ class Project(SQLModel, table=True):
 
     title: str | None = Field(default="")
     summary: str | None = Field(default="")
+    content: str | None = Field(default=None)
 
     priority: ProjectPriority = ProjectPriority.LOW
     category: ProjectCategory = ProjectCategory.SHORT_TERM
@@ -141,6 +143,7 @@ class Project(SQLModel, table=True):
         db: Session,         
         title: str,
         summary: str,
+        content: str | None,
         priority: ProjectPriority,
         category: ProjectCategory,
         start_date: int,
@@ -157,6 +160,7 @@ class Project(SQLModel, table=True):
                 .values(
                     title=title,
                     summary=summary,
+                    content=content,
                     priority=priority,
                     category=category,
                     start_date=start_date,
@@ -172,6 +176,7 @@ class Project(SQLModel, table=True):
                 .values(
                     title=title,
                     summary=summary,
+                    content=content,
                     priority=priority,
                     category=category,
                     start_date=start_date,
