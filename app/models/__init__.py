@@ -12,7 +12,9 @@ from .api import (
     PutModifyProjectRequest,
     PutModifyProjectResponse,
     PostDashboardUploadFileResponse,
-    DeleteDashboardResponse
+    DeleteDashboardResponse,
+    ProjectProgressResponse,
+    ProjectProgress
 )
 from .dashboard import (
     Project,
@@ -58,5 +60,5 @@ __all__ =[
     'PostDashboardUploadFileResponse',
     'DeleteDashboardResponse',
     'ProjectDTO',
-
+    'ProjectProgressResponse'
 ]

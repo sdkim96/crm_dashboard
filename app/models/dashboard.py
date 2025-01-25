@@ -19,6 +19,8 @@ from .enum import (
     ProjectDateFilter,
 )
 
+
+
 class ProjectDTO(BaseModel):
     u_id: uuid.UUID = Field(default_factory=uuid.uuid4)
 
@@ -59,11 +61,24 @@ class Project(SQLModel, table=True):
     updated_at: int = Field(default_factory=lambda: int(datetime.now().timestamp()))
 
     @property
-    def duration(self):
-        if self.start_date and self.end_date:
-            return self.end_date - self.start_date
-        return None
+    def progress(self) -> float:
+        now = datetime.now().timestamp()
+        if self.end_date < now:
+            return 100.0 
+        
+        total = self.end_date - self.start_date
+        progress = now - self.start_date
+        return (progress / total) * 100
     
+    @classmethod
+    def get_all(
+        cls,
+        db: Session
+    ) -> List["Project"]:
+        stmt = select(cls)
+        return db.exec(stmt).all() # type: ignore
+
+
     @classmethod
     def get_one(
         cls,

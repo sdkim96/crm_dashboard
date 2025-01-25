@@ -65,6 +65,21 @@ export type ProjectDTO = {
 
 export type ProjectPriority = 'low' | 'medium' | 'high' | 'critical';
 
+export type ProjectProgress = {
+    u_id?: string;
+    title?: (string | null);
+    priority: ProjectPriority;
+    category: ProjectCategory;
+    start_date: number;
+    end_date: number;
+    progress: number;
+};
+
+export type ProjectProgressResponse = {
+    request_id?: string;
+    projects: Array<ProjectProgress>;
+};
+
 export type PutModifyProjectRequest = {
     u_id: string;
     title: string;
@@ -133,6 +148,8 @@ export type GetDashboardApiV1DashboardGetData = {
 };
 
 export type GetDashboardApiV1DashboardGetResponse = (GetDashboardResponse);
+
+export type GetProjectProgressApiV1DashboardProgressGetResponse = (ProjectProgressResponse);
 
 export type CreateProjectApiV1DashboardCreatePostData = {
     requestBody: PostCreateProjectRequest;

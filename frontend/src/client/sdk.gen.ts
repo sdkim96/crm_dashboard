@@ -3,7 +3,7 @@
 import type { CancelablePromise } from './core/CancelablePromise';
 import { OpenAPI } from './core/OpenAPI';
 import { request as __request } from './core/request';
-import type { SignUpApiV1UsersSignUpPostData, SignUpApiV1UsersSignUpPostResponse, SignInApiV1UsersSignInPostData, SignInApiV1UsersSignInPostResponse, GetMeApiV1UsersMeGetResponse, GetDashboardApiV1DashboardGetData, GetDashboardApiV1DashboardGetResponse, CreateProjectApiV1DashboardCreatePostData, CreateProjectApiV1DashboardCreatePostResponse, ModifyProjectApiV1DashboardModifyPutData, ModifyProjectApiV1DashboardModifyPutResponse, DeleteProjectApiV1DashboardDeleteDeleteData, DeleteProjectApiV1DashboardDeleteDeleteResponse, UploadFileApiV1DashboardUploadFilePostData, UploadFileApiV1DashboardUploadFilePostResponse, DownloadFileApiV1DashboardDownloadFileGetData, DownloadFileApiV1DashboardDownloadFileGetResponse, DeleteFileApiV1DashboardDeleteFileDeleteData, DeleteFileApiV1DashboardDeleteFileDeleteResponse } from './types.gen';
+import type { SignUpApiV1UsersSignUpPostData, SignUpApiV1UsersSignUpPostResponse, SignInApiV1UsersSignInPostData, SignInApiV1UsersSignInPostResponse, GetMeApiV1UsersMeGetResponse, GetDashboardApiV1DashboardGetData, GetDashboardApiV1DashboardGetResponse, GetProjectProgressApiV1DashboardProgressGetResponse, CreateProjectApiV1DashboardCreatePostData, CreateProjectApiV1DashboardCreatePostResponse, ModifyProjectApiV1DashboardModifyPutData, ModifyProjectApiV1DashboardModifyPutResponse, DeleteProjectApiV1DashboardDeleteDeleteData, DeleteProjectApiV1DashboardDeleteDeleteResponse, UploadFileApiV1DashboardUploadFilePostData, UploadFileApiV1DashboardUploadFilePostResponse, DownloadFileApiV1DashboardDownloadFileGetData, DownloadFileApiV1DashboardDownloadFileGetResponse, DeleteFileApiV1DashboardDeleteFileDeleteData, DeleteFileApiV1DashboardDeleteFileDeleteResponse } from './types.gen';
 
 export class DefaultService {
     /**
@@ -83,6 +83,18 @@ export class DefaultService {
             errors: {
                 422: 'Validation Error'
             }
+        });
+    }
+    
+    /**
+     * Get Project Progress
+     * @returns ProjectProgressResponse Successful Response
+     * @throws ApiError
+     */
+    public static getProjectProgressApiV1DashboardProgressGet(): CancelablePromise<GetProjectProgressApiV1DashboardProgressGetResponse> {
+        return __request(OpenAPI, {
+            method: 'GET',
+            url: '/api/v1/dashboard/progress'
         });
     }
     

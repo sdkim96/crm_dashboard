@@ -33,7 +33,9 @@ from app.models import (
     PutModifyProjectResponse,
     PostDashboardUploadFileResponse,
     DeleteDashboardResponse,
-    ProjectDTO
+    ProjectDTO,
+    ProjectProgressResponse,
+    ProjectProgress
 )
 from app.modules import llm, blob
 
@@ -80,6 +82,32 @@ async def get_dashboard(
     ]
 
     return GetDashboardResponse(projects=projects_dto)
+
+@dashboard_r.get("/progress", response_model=ProjectProgressResponse)
+async def get_project_progress(
+    request_id: RequestDep,
+    db: SessionDep
+):
+    projects = Project.get_all(db)
+
+    return ProjectProgressResponse(
+        projects=[
+            ProjectProgress(
+                u_id=project.u_id,
+                title=project.title,
+                priority=project.priority,
+                category=project.category,
+                start_date=project.start_date,
+                end_date=project.end_date,
+                progress=project.progress
+            )
+            for project in projects
+        ]
+    )
+
+
+
+
 
 @dashboard_r.post("/create", response_model=PostCreateProjectResponse)
 async def create_project(

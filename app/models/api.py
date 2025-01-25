@@ -40,3 +40,20 @@ class PostDashboardUploadFileResponse(BaseResponse):
 
 class DeleteDashboardResponse(BaseResponse):
     status: bool
+
+class ProjectProgress(BaseModel):
+    
+    u_id: uuid.UUID = Field(default_factory=uuid.uuid4)
+
+    title: str | None = Field(default="")
+
+    priority: ProjectPriority
+    category: ProjectCategory
+
+    start_date: int
+    end_date: int
+
+    progress: float
+
+class ProjectProgressResponse(BaseResponse):
+    projects: List[ProjectProgress]
