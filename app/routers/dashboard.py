@@ -68,6 +68,7 @@ async def get_dashboard(
             u_id=p.u_id,
             title=p.title,
             summary=p.summary,
+            content=p.content,
             priority=p.priority,
             category=p.category,
             start_date=p.start_date,

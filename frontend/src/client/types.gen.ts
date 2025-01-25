@@ -53,6 +53,7 @@ export type ProjectDTO = {
     u_id?: string;
     title?: (string | null);
     summary?: (string | null);
+    content?: (string | null);
     priority: ProjectPriority;
     category: ProjectCategory;
     start_date: number;
@@ -68,6 +69,7 @@ export type PutModifyProjectRequest = {
     u_id: string;
     title: string;
     summary: string;
+    content: (string | null);
     priority: ProjectPriority;
     category: ProjectCategory;
     start_date: number;

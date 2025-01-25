@@ -157,6 +157,22 @@ const ModifyProjectDrawer = ({
               />
             </Box>
 
+            <Box w="100%" p={4} bg="white" shadow="sm" borderRadius="md">
+              <Text fontSize="sm" fontWeight="bold" mb={2}>
+                내용
+              </Text>
+              <Textarea
+                placeholder="내용"
+                value={task?.content || ''}
+                onChange={(e) =>
+                  setTask({ ...task, content: e.target.value } as ProjectDTO)
+                }
+                size="lg" // 기본 크기
+                minH="500px" // 세로 길이 조정
+                resize="vertical" // 사용자가 크기를 조정할 수 있도록 설정
+              />
+            </Box>
+
             <HStack spacing={4} w="100%">
               <Box flex="1" p={4} bg="white" shadow="sm" borderRadius="md">
                 <Text fontSize="sm" fontWeight="bold" mb={2}>
