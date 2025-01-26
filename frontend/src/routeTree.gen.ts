@@ -16,6 +16,7 @@ import { Route as LoginImport } from './routes/login'
 import { Route as LayoutImport } from './routes/_layout'
 import { Route as LayoutIndexImport } from './routes/_layout/index'
 import { Route as LayoutDashboardImport } from './routes/_layout/dashboard'
+import { Route as LayoutBizImport } from './routes/_layout/biz'
 
 // Create/Update Routes
 
@@ -44,6 +45,11 @@ const LayoutDashboardRoute = LayoutDashboardImport.update({
   getParentRoute: () => LayoutRoute,
 } as any)
 
+const LayoutBizRoute = LayoutBizImport.update({
+  path: '/biz',
+  getParentRoute: () => LayoutRoute,
+} as any)
+
 // Populate the FileRoutesByPath interface
 
 declare module '@tanstack/react-router' {
@@ -60,6 +66,10 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof SignupImport
       parentRoute: typeof rootRoute
     }
+    '/_layout/biz': {
+      preLoaderRoute: typeof LayoutBizImport
+      parentRoute: typeof LayoutImport
+    }
     '/_layout/dashboard': {
       preLoaderRoute: typeof LayoutDashboardImport
       parentRoute: typeof LayoutImport
@@ -74,7 +84,11 @@ declare module '@tanstack/react-router' {
 // Create and export the route tree
 
 export const routeTree = rootRoute.addChildren([
-  LayoutRoute.addChildren([LayoutDashboardRoute, LayoutIndexRoute]),
+  LayoutRoute.addChildren([
+    LayoutBizRoute,
+    LayoutDashboardRoute,
+    LayoutIndexRoute,
+  ]),
   LoginRoute,
   SignupRoute,
 ])

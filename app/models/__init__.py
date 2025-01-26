@@ -14,7 +14,13 @@ from .api import (
     PostDashboardUploadFileResponse,
     DeleteDashboardResponse,
     ProjectProgressResponse,
+    GetBizcardsResponse,
     ProjectProgress
+)
+from .bizcard import (
+    BizClientDTO,
+    BizClient,
+    BusinessCard
 )
 from .dashboard import (
     Project,
@@ -60,5 +66,10 @@ __all__ =[
     'PostDashboardUploadFileResponse',
     'DeleteDashboardResponse',
     'ProjectDTO',
-    'ProjectProgressResponse'
+    'ProjectProgressResponse',
+    'BizClientDTO',
+    'BizClient',
+    'BusinessCard',
+    'GetBizcardsResponse',
+    'ProjectProgress'
 ]

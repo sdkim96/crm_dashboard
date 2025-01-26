@@ -2,6 +2,7 @@ import { Box, Flex, Text } from "@chakra-ui/react";
 import { Link } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 import { DefaultService } from "../../client"; // 경로는 프로젝트에 맞게 수정
+import { title } from "node:process";
 
 const SidebarItems: React.FC<{ onClose?: () => void }> = ({ onClose }) => {
   const [userType, setUserType] = useState<string | null>(null);
@@ -25,6 +26,7 @@ const SidebarItems: React.FC<{ onClose?: () => void }> = ({ onClose }) => {
   const items = [
     { title: "내 정보", path: "/" }, // /api/user/me
     { title: "업무 일정 대시보드", path: "/dashboard" }, // /api/analysis
+    { title: "비즈니스 파트너", path: "/biz" }, // /api/schedule
   ];
 
   // 관리자일 경우에만 추가

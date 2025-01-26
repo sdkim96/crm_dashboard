@@ -4,6 +4,7 @@ from pydantic import BaseModel, Field
 from typing import List
 from .dashboard import ProjectDTO
 from .enum import ProjectPriority, ProjectCategory
+from .bizcard import BizClientDTO
 
 class BaseResponse(BaseModel):
     request_id: uuid.UUID = Field(default_factory=uuid.uuid4)
@@ -57,3 +58,7 @@ class ProjectProgress(BaseModel):
 
 class ProjectProgressResponse(BaseResponse):
     projects: List[ProjectProgress]
+
+
+class GetBizcardsResponse(BaseResponse):
+    bizcards: List[BizClientDTO]
