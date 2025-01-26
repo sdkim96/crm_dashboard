@@ -2,7 +2,6 @@ import { Box, Flex, Text } from "@chakra-ui/react";
 import { Link } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 import { DefaultService } from "../../client"; // 경로는 프로젝트에 맞게 수정
-import { title } from "node:process";
 
 const SidebarItems: React.FC<{ onClose?: () => void }> = ({ onClose }) => {
   const [userType, setUserType] = useState<string | null>(null);
