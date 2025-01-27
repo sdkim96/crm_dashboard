@@ -67,6 +67,8 @@ class Project(SQLModel, table=True):
             return 100.0 
         
         total = self.end_date - self.start_date
+        if total == 0:
+            return 100.0
         progress = now - self.start_date
         return (progress / total) * 100
     
