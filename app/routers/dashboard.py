@@ -45,6 +45,7 @@ dashboard_r = APIRouter()
 @dashboard_r.get("", response_model=GetDashboardResponse)
 async def get_dashboard(
     request_id: RequestDep,
+    me: UserDep,
     db: SessionDep,
     category: ProjectCategory | None = Query(None),
     priority: ProjectPriority | None = Query(None),
@@ -86,6 +87,7 @@ async def get_dashboard(
 @dashboard_r.get("/progress", response_model=ProjectProgressResponse)
 async def get_project_progress(
     request_id: RequestDep,
+    me: UserDep,
     db: SessionDep
 ):
     projects = Project.get_all(db)
@@ -208,6 +210,7 @@ async def modify_project(
 async def delete_project(
     request_id: RequestDep,
     db: SessionDep,
+    me: UserDep,
     blob_client: BlobClientDep,
     u_id: Annotated[uuid.UUID, Query(...)]
 ):

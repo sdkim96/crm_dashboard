@@ -24,8 +24,8 @@ class BizClient(SQLModel, table=True):
     u_id: uuid.UUID = SQLModelField(default_factory=uuid.uuid4, primary_key=True)
     biz_card: dict = SQLModelField(sa_type=JSONB, nullable=False, description="The JSON value stored in the table")  # dict로 변경
     category: str
-    blob_file_name: str
-    origin_file_name: str
+    blob_file_name: str = SQLModelField(nullable=True)
+    origin_file_name: str = SQLModelField(nullable=True)
 
     @classmethod
     def get_all(cls, db: Session):

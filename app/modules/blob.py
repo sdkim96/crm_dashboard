@@ -14,6 +14,7 @@ def upload_blob_stream(
     blob_service: BlobServiceClient,
     blob_name: str,
     blob_buffer: io.BytesIO,
+    container_name: str = CONTAINER_NAME
 ):
     blob_client = blob_service.get_blob_client(
         container=CONTAINER_NAME, 
@@ -34,6 +35,7 @@ def upload_blob_stream(
 def download_blob_to_stream(
     blob_service: BlobServiceClient,
     blob_name: str,
+    container_name: str = CONTAINER_NAME
 ):
     blob_client = blob_service.get_blob_client(
         container=CONTAINER_NAME, 
@@ -53,7 +55,8 @@ def download_blob_to_stream(
 
 def delete_blob(
     blob_service: BlobServiceClient, 
-    blob_name: str
+    blob_name: str,
+    container_name: str = CONTAINER_NAME
 ):
     blob_client = blob_service.get_blob_client(container=CONTAINER_NAME, blob=blob_name)
     blob_client.delete_blob()

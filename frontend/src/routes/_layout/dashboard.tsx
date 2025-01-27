@@ -17,7 +17,10 @@ import {
   Divider,
   Flex,
   Button,
+  Input,
+  IconButton,
 } from '@chakra-ui/react';
+import { SearchIcon } from '@chakra-ui/icons';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import {
   DefaultService,
@@ -57,6 +60,7 @@ function ProjectDashboard() {
   const limit = 10; // 페이지당 데이터 개수
 
   const [isSubmitted, setIsSubmitted] = useState(false); // 요청 성공 여부
+  const [query, setQuery] = useState(''); // 검색어 상태
 
   const { data, isLoading, isError } = useQuery<GetDashboardApiV1DashboardGetResponse>({
     queryKey: ['dashboard', categoryFilter, priorityFilter, currentPage],
@@ -65,6 +69,7 @@ function ProjectDashboard() {
         category: categoryFilter?.length ? categoryFilter: null,
         priority: priorityFilter?.length ? priorityFilter: null,
         limit,
+        query: query,
         offset: (currentPage - 1) *  limit,
       });
       setIsLastPage(response.projects.length < limit);
@@ -159,8 +164,8 @@ function ProjectDashboard() {
   }
 
   return (
-    <Box p={6} bg="gray.50" minH="100vh">
-      <Box bg="blue.500" color="white" p={4} borderRadius="md" shadow="sm">
+    <Box p={6} bg="gray.50" minH="100vh" w="100%">
+      <Box bg="blue.500" color="white" p={4} borderRadius="12" shadow="sm">
         <Heading size="lg">업무 일정 대시보드</Heading>
       </Box>
       <VStack mt={6} spacing={4} align="stretch">
@@ -188,17 +193,39 @@ function ProjectDashboard() {
                 <option value="critical">Critical</option>
               </Select>
             </HStack>
-            <Button 
+            <HStack spacing={4}>
+            <Input
+              placeholder="검색어를 입력하세요"
+              value={query}
+              onChange={(e) => setQuery(e.target.value)}
+              onKeyDown={(e) => {
+                if (e.key === 'Enter') {
+                  setCurrentPage(1);
+                  queryClient.invalidateQueries({ queryKey: ['dashboard'] });
+              }}}
+            />
+            <IconButton
+              aria-label="검색"
+              borderRadius="13"
+              icon={<SearchIcon />}
+              onClick={() => {
+                setCurrentPage(1);
+                queryClient.invalidateQueries({ queryKey: ['dashboard'] });
+              }}
+            />
+            <IconButton 
+              aria-label="새 프로젝트 추가"
+              borderRadius="13"
               bg={theme.colors.ui.main} 
               color={theme.colors.ui.light} 
-              leftIcon={<AddIcon />} 
+              icon={<AddIcon />} 
               onClick={()=>{
                 onModalOpen();
                 setIsSubmitted(false);
               }}
-            >
-              새 프로젝트
-            </Button>
+            />
+            </HStack>            
+            
           </Flex>
         </Box>
         <Divider />
@@ -240,6 +267,13 @@ function ProjectDashboard() {
                     <Button
                     size="sm"
                     colorScheme="blue"
+                    borderRadius="10"
+                    style={{
+                      whiteSpace: 'nowrap',
+                      overflow: 'hidden',
+                      textOverflow: 'ellipsis',
+                      maxWidth: '200px', // 버튼의 최대 너비를 설정 (필요에 따라 조정)
+                    }}
                     onClick={async (e) => {
                       e.stopPropagation(); // 버튼 클릭 시 다른 이벤트가 트리거되지 않도록 방지
                       try {
@@ -271,7 +305,10 @@ function ProjectDashboard() {
                       }
                     }}
                   >
-                    {task.original_file_name}
+                    {task.original_file_name.length > 15
+                      ? `${task.original_file_name.slice(0, 10)}...${task.original_file_name.slice(-5)}`
+                      : task.original_file_name
+                    }
                   </Button>
                   ) : (
                     '-'

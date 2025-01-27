@@ -1,20 +1,23 @@
 from fastapi import APIRouter
 from fastapi.responses import StreamingResponse
 from app.models import BizClient, BizClientDTO, BusinessCard, GetBizcardsResponse
-from app.deps import RequestDep, SessionDep
+from app.deps import RequestDep, SessionDep, UserDep
 
 bizcard_r = APIRouter()
+
+CONTAINER_NAME = "biz-cards"
 
 @bizcard_r.get("", response_model=GetBizcardsResponse)
 async def get_bizcards(
     request_id: RequestDep,
+    me: UserDep,
     db: SessionDep
 ):
     bizclients = BizClient.get_all(db)
 
-    BizClientDTOs = []
+    biz_dtos = []
     for client in bizclients:
-        BizClientDTOs.append(BizClientDTO(
+        biz_dtos.append(BizClientDTO(
             u_id=client.u_id,
             category=client.category,
             blob_file_name=client.blob_file_name,
@@ -22,4 +25,4 @@ async def get_bizcards(
             biz_card=BusinessCard.model_validate(client.biz_card)
         ))
 
-    return GetBizcardsResponse(bizcards=BizClientDTOs)
+    return GetBizcardsResponse(bizcards=biz_dtos)
