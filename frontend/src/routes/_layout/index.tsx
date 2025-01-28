@@ -14,7 +14,7 @@ import {
 } from "@chakra-ui/react";
 import { createFileRoute } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
-import { DefaultService, ProjectProgressResponse } from "../../client";
+import { UsersService, ProjectProgressResponse, DashboardService } from "../../client";
 
 // (우선순위별로 배지 색상 등을 분기하기 위한 예시)
 function getPriorityColorScheme(priority: string) {
@@ -46,7 +46,7 @@ function Dashboard() {
 
   // 사용자 정보 로드
   useEffect(() => {
-    DefaultService.getMeApiV1UsersMeGet()
+    UsersService.getMeApiV1UsersMeGet()
       .then((response) => {
         setUser(response);
       })
@@ -58,7 +58,7 @@ function Dashboard() {
 
   // 프로젝트 목록 로드
   useEffect(() => {
-    DefaultService.getProjectProgressApiV1DashboardProgressGet()
+    DashboardService.getProjectProgressApiV1DashboardProgressGet()
       .then((response) => {
         setProject(response);
       })

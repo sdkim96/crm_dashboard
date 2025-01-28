@@ -50,6 +50,9 @@ class Project(SQLModel, table=True):
     priority: ProjectPriority = ProjectPriority.LOW
     category: ProjectCategory = ProjectCategory.SHORT_TERM
 
+    assignee_u_id: uuid.UUID | None = Field(default=None)
+    program_u_id: uuid.UUID | None = Field(default=None)
+
     start_date: int
     end_date: int
 
@@ -65,8 +68,9 @@ class Project(SQLModel, table=True):
         now = datetime.now().timestamp()
         if self.end_date < now:
             return 100.0 
-        
         total = self.end_date - self.start_date
+        if total == 0:
+            return 100.0
         progress = now - self.start_date
         return (progress / total) * 100
     

@@ -7,7 +7,8 @@ from app.deps import get_db
 from app.routers import (
     user_r,
     dashboard_r,
-    bizcard_r
+    bizcard_r,
+    program_r
 
 )
 from app.static import UIMiddleware
@@ -29,8 +30,9 @@ if settings.all_cors_origins:
         allow_headers=["*"],
     )
 
-app.include_router(user_r, prefix=f"{settings.API_V1_STR}/users")
-app.include_router(dashboard_r, prefix=f"{settings.API_V1_STR}/dashboard")
-app.include_router(bizcard_r, prefix=f"{settings.API_V1_STR}/biz")
+app.include_router(user_r, prefix=f"{settings.API_V1_STR}/users", tags=["users"])
+app.include_router(dashboard_r, prefix=f"{settings.API_V1_STR}/dashboard", tags=["dashboard"])
+app.include_router(bizcard_r, prefix=f"{settings.API_V1_STR}/biz", tags=["biz"])
+app.include_router(program_r, prefix=f"{settings.API_V1_STR}/program", tags=["program"])
 
 app.add_middleware(UIMiddleware)

@@ -22,7 +22,7 @@ import {
 import { type SubmitHandler, useForm } from "react-hook-form";
 
 import Logo from "/assets/images/fastapi-logo.svg";
-import { DefaultService } from "../client"; // API 서비스 클래스
+import { UsersService } from "../client"; // API 서비스 클래스
 import { isLoggedIn } from "../hooks/useAuth";
 
 export const Route = createFileRoute("/login")({
@@ -60,7 +60,7 @@ function Login() {
     setError(null); // 이전 오류 초기화
 
     try {
-      const response = await DefaultService.signInApiV1UsersSignInPost({
+      const response = await UsersService.signInApiV1UsersSignInPost({
         formData: {
           username: data.username,
           password: data.password,

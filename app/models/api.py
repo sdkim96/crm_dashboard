@@ -5,6 +5,7 @@ from typing import List
 from .dashboard import ProjectDTO
 from .enum import ProjectPriority, ProjectCategory
 from .bizcard import BizClientDTO
+from .program import ProgramDTO
 
 class BaseResponse(BaseModel):
     request_id: uuid.UUID = Field(default_factory=uuid.uuid4)
@@ -62,3 +63,15 @@ class ProjectProgressResponse(BaseResponse):
 
 class GetBizcardsResponse(BaseResponse):
     bizcards: List[BizClientDTO]
+
+class PutBizcardsRequest(BaseModel):
+    u_id: uuid.UUID
+    biz_card: BizClientDTO
+
+class PutBizcardsResponse(BaseResponse):
+    status: bool
+
+
+class GetBizcardDetailResponse(BaseResponse):
+    biz_card: BizClientDTO
+    programs: List[ProgramDTO]

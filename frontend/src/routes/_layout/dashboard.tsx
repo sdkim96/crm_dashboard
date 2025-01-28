@@ -23,7 +23,7 @@ import {
 import { SearchIcon } from '@chakra-ui/icons';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import {
-  DefaultService,
+  DashboardService,
   ProjectCategory,
   ProjectPriority,
   ProjectDTO,
@@ -65,7 +65,7 @@ function ProjectDashboard() {
   const { data, isLoading, isError } = useQuery<GetDashboardApiV1DashboardGetResponse>({
     queryKey: ['dashboard', categoryFilter, priorityFilter, currentPage],
     queryFn: async () => {
-      const response = await DefaultService.getDashboardApiV1DashboardGet({
+      const response = await DashboardService.getDashboardApiV1DashboardGet({
         category: categoryFilter?.length ? categoryFilter: null,
         priority: priorityFilter?.length ? priorityFilter: null,
         limit,
@@ -79,7 +79,7 @@ function ProjectDashboard() {
 
   const modifyProjectMutation = useMutation<PutModifyProjectResponse, unknown, PutModifyProjectRequest>({
     mutationFn: (updatedTask) =>
-      DefaultService.modifyProjectApiV1DashboardModifyPut({
+      DashboardService.modifyProjectApiV1DashboardModifyPut({
         requestBody: updatedTask,
       }),
     onSuccess: () => {
@@ -94,7 +94,7 @@ function ProjectDashboard() {
 
   const createProjectMutation = useMutation<PostCreateProjectResponse, unknown, PostCreateProjectRequest>({
     mutationFn: (newProject) =>
-      DefaultService.createProjectApiV1DashboardCreatePost({
+      DashboardService.createProjectApiV1DashboardCreatePost({
         requestBody: newProject,
       }),
     onSuccess: () => {

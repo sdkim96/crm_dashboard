@@ -3,20 +3,46 @@
 import type { CancelablePromise } from './core/CancelablePromise';
 import { OpenAPI } from './core/OpenAPI';
 import { request as __request } from './core/request';
-import type { SignUpApiV1UsersSignUpPostData, SignUpApiV1UsersSignUpPostResponse, SignInApiV1UsersSignInPostData, SignInApiV1UsersSignInPostResponse, GetMeApiV1UsersMeGetResponse, GetDashboardApiV1DashboardGetData, GetDashboardApiV1DashboardGetResponse, GetProjectProgressApiV1DashboardProgressGetResponse, CreateProjectApiV1DashboardCreatePostData, CreateProjectApiV1DashboardCreatePostResponse, ModifyProjectApiV1DashboardModifyPutData, ModifyProjectApiV1DashboardModifyPutResponse, DeleteProjectApiV1DashboardDeleteDeleteData, DeleteProjectApiV1DashboardDeleteDeleteResponse, UploadFileApiV1DashboardUploadFilePostData, UploadFileApiV1DashboardUploadFilePostResponse, DownloadFileApiV1DashboardDownloadFileGetData, DownloadFileApiV1DashboardDownloadFileGetResponse, DeleteFileApiV1DashboardDeleteFileDeleteData, DeleteFileApiV1DashboardDeleteFileDeleteResponse, GetBizcardsApiV1BizGetResponse } from './types.gen';
+import type { GetBizcardsApiV1BizGetData, GetBizcardsApiV1BizGetResponse, PutBizcardApiV1BizPutData, PutBizcardApiV1BizPutResponse, GetBizcardDetailApiV1BizDetailGetData, GetBizcardDetailApiV1BizDetailGetResponse, GetDashboardApiV1DashboardGetData, GetDashboardApiV1DashboardGetResponse, GetProjectProgressApiV1DashboardProgressGetResponse, CreateProjectApiV1DashboardCreatePostData, CreateProjectApiV1DashboardCreatePostResponse, ModifyProjectApiV1DashboardModifyPutData, ModifyProjectApiV1DashboardModifyPutResponse, DeleteProjectApiV1DashboardDeleteDeleteData, DeleteProjectApiV1DashboardDeleteDeleteResponse, UploadFileApiV1DashboardUploadFilePostData, UploadFileApiV1DashboardUploadFilePostResponse, DownloadFileApiV1DashboardDownloadFileGetData, DownloadFileApiV1DashboardDownloadFileGetResponse, DeleteFileApiV1DashboardDeleteFileDeleteData, DeleteFileApiV1DashboardDeleteFileDeleteResponse, StartProgramApiV1ProgramStartGetResponse, SignUpApiV1UsersSignUpPostData, SignUpApiV1UsersSignUpPostResponse, SignInApiV1UsersSignInPostData, SignInApiV1UsersSignInPostResponse, GetMeApiV1UsersMeGetResponse } from './types.gen';
 
-export class DefaultService {
+export class BizService {
     /**
-     * Sign Up
+     * Get Bizcards
      * @param data The data for the request.
-     * @param data.requestBody
-     * @returns UserDTO Successful Response
+     * @param data.query
+     * @param data.orderBy
+     * @param data.offset
+     * @param data.limit
+     * @returns GetBizcardsResponse Successful Response
      * @throws ApiError
      */
-    public static signUpApiV1UsersSignUpPost(data: SignUpApiV1UsersSignUpPostData): CancelablePromise<SignUpApiV1UsersSignUpPostResponse> {
+    public static getBizcardsApiV1BizGet(data: GetBizcardsApiV1BizGetData = {}): CancelablePromise<GetBizcardsApiV1BizGetResponse> {
         return __request(OpenAPI, {
-            method: 'POST',
-            url: '/api/v1/users/sign_up',
+            method: 'GET',
+            url: '/api/v1/biz',
+            query: {
+                query: data.query,
+                order_by: data.orderBy,
+                offset: data.offset,
+                limit: data.limit
+            },
+            errors: {
+                422: 'Validation Error'
+            }
+        });
+    }
+    
+    /**
+     * Put Bizcard
+     * @param data The data for the request.
+     * @param data.requestBody
+     * @returns PutBizcardsResponse Successful Response
+     * @throws ApiError
+     */
+    public static putBizcardApiV1BizPut(data: PutBizcardApiV1BizPutData): CancelablePromise<PutBizcardApiV1BizPutResponse> {
+        return __request(OpenAPI, {
+            method: 'PUT',
+            url: '/api/v1/biz',
             body: data.requestBody,
             mediaType: 'application/json',
             errors: {
@@ -26,36 +52,28 @@ export class DefaultService {
     }
     
     /**
-     * Sign In
+     * Get Bizcard Detail
      * @param data The data for the request.
-     * @param data.formData
-     * @returns Token Successful Response
+     * @param data.uId
+     * @returns GetBizcardDetailResponse Successful Response
      * @throws ApiError
      */
-    public static signInApiV1UsersSignInPost(data: SignInApiV1UsersSignInPostData): CancelablePromise<SignInApiV1UsersSignInPostResponse> {
+    public static getBizcardDetailApiV1BizDetailGet(data: GetBizcardDetailApiV1BizDetailGetData): CancelablePromise<GetBizcardDetailApiV1BizDetailGetResponse> {
         return __request(OpenAPI, {
-            method: 'POST',
-            url: '/api/v1/users/sign_in',
-            formData: data.formData,
-            mediaType: 'application/x-www-form-urlencoded',
+            method: 'GET',
+            url: '/api/v1/biz/detail',
+            query: {
+                u_id: data.uId
+            },
             errors: {
                 422: 'Validation Error'
             }
         });
     }
     
-    /**
-     * Get Me
-     * @returns UserDTO Successful Response
-     * @throws ApiError
-     */
-    public static getMeApiV1UsersMeGet(): CancelablePromise<GetMeApiV1UsersMeGetResponse> {
-        return __request(OpenAPI, {
-            method: 'GET',
-            url: '/api/v1/users/me'
-        });
-    }
-    
+}
+
+export class DashboardService {
     /**
      * Get Dashboard
      * @param data The data for the request.
@@ -215,15 +233,71 @@ export class DefaultService {
         });
     }
     
+}
+
+export class ProgramService {
     /**
-     * Get Bizcards
-     * @returns GetBizcardsResponse Successful Response
+     * Start Program
+     * @returns unknown Successful Response
      * @throws ApiError
      */
-    public static getBizcardsApiV1BizGet(): CancelablePromise<GetBizcardsApiV1BizGetResponse> {
+    public static startProgramApiV1ProgramStartGet(): CancelablePromise<StartProgramApiV1ProgramStartGetResponse> {
         return __request(OpenAPI, {
             method: 'GET',
-            url: '/api/v1/biz'
+            url: '/api/v1/program/start'
+        });
+    }
+    
+}
+
+export class UsersService {
+    /**
+     * Sign Up
+     * @param data The data for the request.
+     * @param data.requestBody
+     * @returns UserDTO Successful Response
+     * @throws ApiError
+     */
+    public static signUpApiV1UsersSignUpPost(data: SignUpApiV1UsersSignUpPostData): CancelablePromise<SignUpApiV1UsersSignUpPostResponse> {
+        return __request(OpenAPI, {
+            method: 'POST',
+            url: '/api/v1/users/sign_up',
+            body: data.requestBody,
+            mediaType: 'application/json',
+            errors: {
+                422: 'Validation Error'
+            }
+        });
+    }
+    
+    /**
+     * Sign In
+     * @param data The data for the request.
+     * @param data.formData
+     * @returns Token Successful Response
+     * @throws ApiError
+     */
+    public static signInApiV1UsersSignInPost(data: SignInApiV1UsersSignInPostData): CancelablePromise<SignInApiV1UsersSignInPostResponse> {
+        return __request(OpenAPI, {
+            method: 'POST',
+            url: '/api/v1/users/sign_in',
+            formData: data.formData,
+            mediaType: 'application/x-www-form-urlencoded',
+            errors: {
+                422: 'Validation Error'
+            }
+        });
+    }
+    
+    /**
+     * Get Me
+     * @returns UserDTO Successful Response
+     * @throws ApiError
+     */
+    public static getMeApiV1UsersMeGet(): CancelablePromise<GetMeApiV1UsersMeGetResponse> {
+        return __request(OpenAPI, {
+            method: 'GET',
+            url: '/api/v1/users/me'
         });
     }
     

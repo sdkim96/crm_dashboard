@@ -19,7 +19,7 @@ import {
 import { DeleteIcon } from '@chakra-ui/icons';
 import { ProjectDTO, ProjectPriority, ProjectCategory } from '../../client';
 import { useState, useEffect } from 'react';
-import { DefaultService } from '../../client';
+import { DashboardService } from '../../client';
 import { useToast } from '@chakra-ui/react';
 
 interface ModifyProjectDrawerProps {
@@ -52,7 +52,7 @@ const ModifyProjectDrawer = ({
   const handleDelete = async () => {
     if (task?.u_id) {
       try {
-        const response = await DefaultService.deleteProjectApiV1DashboardDeleteDelete({
+        const response = await DashboardService.deleteProjectApiV1DashboardDeleteDelete({
           uId: task.u_id,
         });
         if (response.status) {
@@ -72,7 +72,7 @@ const ModifyProjectDrawer = ({
     if (e.target.files && e.target.files.length > 0) {
       const file = e.target.files[0];
       try {
-        const response = await DefaultService.uploadFileApiV1DashboardUploadFilePost({
+        const response = await DashboardService.uploadFileApiV1DashboardUploadFilePost({
           formData: {
             u_id: task?.u_id || '',
             file,
@@ -97,7 +97,7 @@ const ModifyProjectDrawer = ({
   const handleFileDelete = async () => {
     if (task?.u_id && task.file_id) {
       try {
-        const response = await DefaultService.deleteFileApiV1DashboardDeleteFileDelete({
+        const response = await DashboardService.deleteFileApiV1DashboardDeleteFileDelete({
           uId: task.u_id,
         });
         if (response.status) {
